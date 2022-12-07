@@ -2,8 +2,6 @@ docker exec -ti cass_cassandra-node1_1 bash
 
 nodetool status
 
-
-
 cqlsh 172.28.0.2 -u cassandra -p password123
 
 
@@ -29,3 +27,6 @@ cqlsh 172.28.0.2 -u cassandra -p password123
   delete page from click where userId = 123123;
   select * from click;
   update click set page = 'market'  where userId = 123123;
+
+
+  select * from system_views.disk_usage;

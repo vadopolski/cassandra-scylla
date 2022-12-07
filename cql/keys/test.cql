@@ -1,3 +1,6 @@
+ssh vanja1616@51.250.29.157
+
+
 docker exec -ti cass_cassandra-node1_1 bash
 
 nodetool status
@@ -5,10 +8,7 @@ nodetool status
 cqlsh 172.30.0.2 -u cassandra -p password123
 
 
-
-CREATE
-KEYSPACE sensor
-WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1};
+CREATE KEYSPACE sensor WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 2};
 
 USE sensor;
 
