@@ -1,16 +1,19 @@
 ssh vanja1616@51.250.29.157
 
 
-docker exec -ti cass_cassandra-node1_1 bash
+cd cassandra-scylla/docker/
+
+docker exec -ti docker_cassandra-node1_1 bash
+
 
 nodetool status
 
-cqlsh 172.30.0.2 -u cassandra -p password123
+cqlsh 172.18.0.2 -u cassandra -p password123
 
 
-CREATE KEYSPACE sensor WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 2};
+CREATE KEYSPACE sensor_otus WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 2};
 
-USE sensor;
+USE sensor_otus;
 
 DESC TABLES;
 
@@ -28,8 +31,7 @@ CREATE TABLE IF NOT EXISTS sensors_by_network
     sensor          TEXT,
     latitude        DECIMAL,
     longitude       DECIMAL,
-    characteristics MAP< TEXT,
-    TEXT>,
+    characteristics MAP <TEXT, TEXT>,
     PRIMARY KEY ((network),
     sensor
 )
@@ -39,15 +41,43 @@ CREATE TABLE IF NOT EXISTS sensors_by_network
 CREATE TABLE IF NOT EXISTS temperatures_by_sensor_bad
 (
     sensor    TEXT,
+    date      DATE,
     timestamp TIMESTAMP,
     value     FLOAT,
-    PRIMARY KEY ((sensor),
-    timestamp
-) ) WITH CLUSTERING ORDER BY (timestamp DESC);
+    PRIMARY KEY ((sensor), timestamp)  -- primary: sensor - partition, timestamp - clustering
+--     PRIMARY KEY (sensor, timestamp) -- primary: sensor - partition, timestamp - clustering
+--     PRIMARY KEY ((sensor, timestamp)) -- primary: sensor, timestamp - partition
+    ) WITH CLUSTERING ORDER BY (timestamp DESC);
+
+
+-- data skew     01.01.23   02.01.23
+-- s1 3-4 s =>    4M +      12M
+-- s2 1 s =>      12M +     1M
+-- s3 12 s =>     1M +      4M
+-- s4
+
+
+
+insert v1 = aaa v2 = bbb
+k v1 = 100 v2 = 100
+
+    50 sec
+
+update v1 = xxx
+k  v1 = 100 v2 = 50
+
+50 sec
+
+k, xxx, null
+
+
+
+
 
 
 
 DROP TABLE temperatures_by_sensor_bad;
+DROP TABLE temperatures_by_sensor;
 
 CREATE TABLE temperatures_by_sensor
 (
@@ -55,9 +85,7 @@ CREATE TABLE temperatures_by_sensor
     date      DATE,
     timestamp TIMESTAMP,
     value     FLOAT,
-    PRIMARY KEY ((sensor, date),
-    timestamp
-) )
+    PRIMARY KEY ((sensor, date),timestamp) )
 WITH CLUSTERING ORDER BY (timestamp DESC);
 
 DESC TABLES;
@@ -97,9 +125,14 @@ VALUES ('s1001', '2020-07-04', '2020-07-04 12:00:01', 97);
 INSERT INTO temperatures_by_sensor
     (sensor, date, timestamp, value)
 VALUES ('s1001', '2020-07-04', '2020-07-04 12:59:59', 98);
+
+
 INSERT INTO temperatures_by_sensor
     (sensor, date, timestamp, value)
-VALUES ('s1002', '2020-07-04', '2020-07-04 00:00:01', 82);
+VALUES ('s1002', '2020-07-04', '2020-07-04 00:00:01', 7777);
+
+
+
 INSERT INTO temperatures_by_sensor
     (sensor, date, timestamp, value)
 VALUES ('s1002', '2020-07-04', '2020-07-04 00:59:59', 80);
