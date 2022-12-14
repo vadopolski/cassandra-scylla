@@ -8,7 +8,7 @@ docker exec -ti docker_cassandra-node1_1 bash
 
 nodetool status
 
-cqlsh 172.18.0.2 -u cassandra -p password123
+cqlsh 172.18.0.3 -u cassandra -p password123
 
 
 
