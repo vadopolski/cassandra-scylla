@@ -7,20 +7,19 @@ cqlsh 172.30.0.2 -u cassandra -p password123
 
 
 CREATE
-KEYSPACE sensor
-WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1};
+    KEYSPACE sensor
+            WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1};
 
 USE sensor;
 
 DESC TABLES;
 
-CREATE TABLE IF NOT EXISTS networks
-(
+CREATE TABLE IF NOT EXISTS networks (
     name        TEXT,
     description TEXT,
     region      TEXT,
-    PRIMARY KEY ((name)
-) );
+    PRIMARY KEY ((name))
+);
 
 CREATE TABLE IF NOT EXISTS sensors_by_network
 (
@@ -28,12 +27,10 @@ CREATE TABLE IF NOT EXISTS sensors_by_network
     sensor          TEXT,
     latitude        DECIMAL,
     longitude       DECIMAL,
-    characteristics MAP< TEXT,
-    TEXT>,
-    PRIMARY KEY ((network),
-    sensor
-)
-    );
+    characteristics MAP<TEXT,TEXT>,
+    PRIMARY KEY ((network), sensor
+        )
+);
 
 -- what is no good there?
 CREATE TABLE IF NOT EXISTS temperatures_by_sensor_bad
@@ -42,8 +39,9 @@ CREATE TABLE IF NOT EXISTS temperatures_by_sensor_bad
     timestamp TIMESTAMP,
     value     FLOAT,
     PRIMARY KEY ((sensor),
-    timestamp
-) ) WITH CLUSTERING ORDER BY (timestamp DESC);
+        timestamp
+        )
+) WITH CLUSTERING ORDER BY (timestamp DESC);
 
 
 
@@ -56,11 +54,13 @@ CREATE TABLE temperatures_by_sensor
     timestamp TIMESTAMP,
     value     FLOAT,
     PRIMARY KEY ((sensor, date),
-    timestamp
-) )
-WITH CLUSTERING ORDER BY (timestamp DESC);
+        timestamp
+        )
+)
+            WITH CLUSTERING ORDER BY (timestamp DESC);
 
-DESC TABLES;
+DESC
+TABLES;
 
 --     CRUD operations
 INSERT INTO networks (name, description, region)
@@ -253,45 +253,48 @@ WHERE sensor = 's1002'
 
 
 
-
 -- delete operation
 
 
 -- Partition level delete
 --  Get a partition
-SELECT *  FROM temperatures_by_sensor
-WHERE sensor='s1002'
-  AND date='2020-07-05';
+SELECT *
+FROM temperatures_by_sensor
+WHERE sensor = 's1002'
+  AND date = '2020-07-05';
 
 --  Delete at Partition level
-DELETE FROM temperatures_by_sensor
-WHERE sensor='s1002'
-  AND date='2020-07-05';
+DELETE
+FROM temperatures_by_sensor
+WHERE sensor = 's1002'
+  AND date = '2020-07-05';
 
 --  Read again
-SELECT *  from temperatures_by_sensor
-WHERE sensor='s1002'
-  AND date='2020-07-05';
+SELECT *
+from temperatures_by_sensor
+WHERE sensor = 's1002'
+  AND date = '2020-07-05';
 
 
 -- Row-level delete
 --  Get a partition
-SELECT *  from temperatures_by_sensor
-WHERE sensor='s1002'
-  AND date='2020-07-04';
+SELECT *
+from temperatures_by_sensor
+WHERE sensor = 's1002'
+  AND date = '2020-07-04';
 
 --  Delete at Row level
-DELETE FROM temperatures_by_sensor
-where sensor='s1002'
-  AND date='2020-07-04'
-  AND timestamp='2020-07-04 00:00:01.000000+0000';
+DELETE
+FROM temperatures_by_sensor
+where sensor = 's1002'
+  AND date = '2020-07-04'
+  AND timestamp = '2020-07-04 00:00:01.000000+0000';
 
 --  Read again
-SELECT *  from temperatures_by_sensor
-WHERE sensor='s1002'
-  AND date='2020-07-04';
-
-
+SELECT *
+from temperatures_by_sensor
+WHERE sensor = 's1002'
+  AND date = '2020-07-04';
 
 
 -- https://github.com/datastaxdevs/workshop-cassandra-fundamentals
