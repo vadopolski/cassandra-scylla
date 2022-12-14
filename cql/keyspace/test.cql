@@ -16,3 +16,5 @@ WITH replication = { 'class': 'NetworkTopologyStrategy', 'DC1': 2, 'DC2': 3 };
 -- There is no request type in Cassndra
 
 
+
+

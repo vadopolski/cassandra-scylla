@@ -1,8 +1,14 @@
-docker exec -ti cass_cassandra-node1_1 bash
+ssh vanja1616@51.250.29.157
+
+
+cd cassandra-scylla/docker/
+
+docker exec -ti docker_cassandra-node1_1 bash
+
 
 nodetool status
 
-cqlsh 172.30.0.2 -u cassandra -p password123
+cqlsh 172.18.0.2 -u cassandra -p password123
 
 
 
@@ -39,13 +45,13 @@ CREATE TABLE IF NOT EXISTS temperatures_by_sensor_bad
     timestamp TIMESTAMP,
     value     FLOAT,
     PRIMARY KEY ((sensor),
-        timestamp
-        )
-) WITH CLUSTERING ORDER BY (timestamp DESC);
+    timestamp
+) ) WITH CLUSTERING ORDER BY (timestamp DESC);
 
 
 
 DROP TABLE temperatures_by_sensor_bad;
+DROP TABLE temperatures_by_sensor;
 
 CREATE TABLE temperatures_by_sensor
 (
@@ -53,11 +59,8 @@ CREATE TABLE temperatures_by_sensor
     date      DATE,
     timestamp TIMESTAMP,
     value     FLOAT,
-    PRIMARY KEY ((sensor, date),
-        timestamp
-        )
-)
-            WITH CLUSTERING ORDER BY (timestamp DESC);
+    PRIMARY KEY ((sensor, date),timestamp) )
+WITH CLUSTERING ORDER BY (timestamp DESC);
 
 DESC
 TABLES;
@@ -97,9 +100,14 @@ VALUES ('s1001', '2020-07-04', '2020-07-04 12:00:01', 97);
 INSERT INTO temperatures_by_sensor
     (sensor, date, timestamp, value)
 VALUES ('s1001', '2020-07-04', '2020-07-04 12:59:59', 98);
+
+
 INSERT INTO temperatures_by_sensor
     (sensor, date, timestamp, value)
-VALUES ('s1002', '2020-07-04', '2020-07-04 00:00:01', 82);
+VALUES ('s1002', '2020-07-04', '2020-07-04 00:00:01', 7777);
+
+
+
 INSERT INTO temperatures_by_sensor
     (sensor, date, timestamp, value)
 VALUES ('s1002', '2020-07-04', '2020-07-04 00:59:59', 80);
@@ -253,6 +261,7 @@ WHERE sensor = 's1002'
 
 
 
+
 -- delete operation
 
 
@@ -295,6 +304,8 @@ SELECT *
 from temperatures_by_sensor
 WHERE sensor = 's1002'
   AND date = '2020-07-04';
+
+
 
 
 -- https://github.com/datastaxdevs/workshop-cassandra-fundamentals

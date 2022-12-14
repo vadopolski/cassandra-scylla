@@ -1,7 +1,7 @@
 
 # created table in memory
 
-# nodetool flush
+nodetool flush
 
 
 # config
@@ -9,7 +9,7 @@
 
 grep "data/data" /opt/bitnami/cassandra/conf/cassandra.yaml
 
-cd folder ....
+cd folder grep "data/data" /opt/bitnami/cassandra/conf/cassandra.yaml
 
 # check that empty
 
